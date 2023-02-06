@@ -31,4 +31,15 @@ class ClippedView @JvmOverloads constructor(context: Context,
 
     private val textOffset = resources.getDimension(R.dimen.textOffset)
     private val textSize = resources.getDimension(R.dimen.textSize)
+
+    //coordinates for column
+    private val columnOne = rectInset
+    private val columnTwo = columnOne + rectInset + clipRectRight
+
+    //coordinates for each row, including the final row for the transformed text
+    private val rowOne = rectInset
+    private val rowTwo = rowOne + rectInset + clipRectBottom
+    private val rowThree = rowTwo + rectInset + clipRectBottom
+    private val rowFour = rowThree + rectInset + clipRectBottom
+    private val textRow = rowFour + (1.5f * clipRectBottom)
 }
