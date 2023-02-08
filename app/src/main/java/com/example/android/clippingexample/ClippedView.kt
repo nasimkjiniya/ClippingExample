@@ -50,6 +50,8 @@ class ClippedView @JvmOverloads constructor(context: Context,
         clipRectBottom - rectInset
     )
 
+    private val rejectRow = rowFour + rectInset + 2*clipRectBottom
+
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         drawBackAndUnclippedRectangle(canvas)
@@ -61,7 +63,7 @@ class ClippedView @JvmOverloads constructor(context: Context,
         drawOutsideClippingExample(canvas)
         drawSkewedTextExample(canvas)
         drawTranslatedTextExample(canvas)
-        // drawQuickRejectExample(canvas)
+        drawQuickRejectExample(canvas)
     }
 
     private fun drawClippedRectangle(canvas: Canvas) {
@@ -232,10 +234,60 @@ class ClippedView @JvmOverloads constructor(context: Context,
     }
 
     private fun drawTranslatedTextExample(canvas: Canvas) {
+
+        canvas.save()
+        paint.color = Color.GREEN
+        // Align the RIGHT side of the text with the origin.
+        paint.textAlign = Paint.Align.LEFT
+        // Apply transformation to canvas.
+        canvas.translate(columnTwo,textRow)
+        // Draw text.
+        canvas.drawText(context.getString(R.string.translated),
+            clipRectLeft,clipRectTop,paint)
+        canvas.restore()
+
     }
     private fun drawSkewedTextExample(canvas: Canvas) {
+        canvas.save()
+        paint.color = Color.YELLOW
+        paint.textAlign = Paint.Align.RIGHT
+        // Position text.
+        canvas.translate(columnTwo, textRow)
+        // Apply skew transformation.
+        canvas.skew(0.2f, 0.3f)
+        canvas.drawText(context.getString(R.string.skewed),
+            clipRectLeft, clipRectTop, paint)
+        canvas.restore()
     }
+
     private fun drawQuickRejectExample(canvas: Canvas) {
+
+        val inClipRectangle = RectF(clipRectRight / 2,
+            clipRectBottom / 2,
+            clipRectRight * 2,
+            clipRectBottom * 2)
+
+        val notInClipRectangle = RectF(RectF(clipRectRight+1,
+            clipRectBottom+1,
+            clipRectRight * 2,
+            clipRectBottom * 2))
+
+        canvas.save()
+        canvas.translate(columnOne, rejectRow)
+        canvas.clipRect(
+            clipRectLeft,clipRectTop,
+            clipRectRight,clipRectBottom
+        )
+        if (canvas.quickReject(
+                inClipRectangle, Canvas.EdgeType.AA)) {
+            canvas.drawColor(Color.WHITE)
+        }
+        else {
+            canvas.drawColor(Color.BLACK)
+            canvas.drawRect(inClipRectangle, paint
+            )
+        }
+        canvas.restore()
     }
 
 }
